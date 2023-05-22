@@ -23,7 +23,7 @@ main = do
           let isValidNumBombs = validateNumBombs numLines numColumns numBombs
           if not isValidNumBombs
               then do
-                  putStrLn "O número de bombas deve ser metade do tamanho do tabuleiro"
+                  putStrLn "O número de bombas deve ser metade do tamanho do tabuleiro!"
                   getNumBombs
               else return numBombs
 
