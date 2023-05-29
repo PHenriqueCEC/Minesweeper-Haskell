@@ -1,0 +1,2 @@
+Compilar: gch main.hs
+Instalar pacotes: cabal install random
