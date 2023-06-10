@@ -101,7 +101,11 @@ playGame board = do
         then do
           let newBoard = openCell (row, col) board
           printBoard newBoard
-          playGame newBoard
+          if isMine (getCell (row, col) newBoard)
+            then putStrLn "Você perdeu!"
+            else if allCellsOpened newBoard
+                   then putStrLn "Você venceu!"
+                   else playGame newBoard
         else do
           putStrLn "Posição inválida!"
           playGame board
@@ -132,6 +136,12 @@ playGame board = do
     _ -> do
       putStrLn "Comando inválido!"
       playGame board
+
+getCell :: (Int, Int) -> MinesweeperBoard -> Cell
+getCell (row, col) (MinesweeperBoard _ _ cells) = cells !! row !! col
+
+allCellsOpened :: MinesweeperBoard -> Bool
+allCellsOpened (MinesweeperBoard _ _ cells) = all isOpen $ concat cells
 
 main :: IO ()
 main = do
