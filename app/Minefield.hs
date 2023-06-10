@@ -1,3 +1,4 @@
+
 module Minefield
     ( Minefield(..)
     , readMinefield
