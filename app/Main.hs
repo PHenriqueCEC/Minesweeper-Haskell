@@ -87,8 +87,9 @@ updateAdjacentCells (row, col) cells = updateCell row col updateAdjacent cells
 countAdjacentMines :: (Int, Int) -> [[Cell]] -> Int
 countAdjacentMines (row, col) cells = length $ filter isMine adjacentCells
   where
-    adjacentCells = [ cells !! i !! j | i <- [row-1..row+1], j <- [col-1..col+1], isValidCell (i, j) ]
+    adjacentCells = [ cells !! i !! j | i <- [row-1..row+1], j <- [col-1..col+1], isValidCell (i, j) && not (isDiagonal (row, col) (i, j)) ]
     isValidCell (i, j) = i >= 0 && i < numRows && j >= 0 && j < numCols
+    isDiagonal (row1, col1) (row2, col2) = abs (row1 - row2) == 1 && abs (col1 - col2) == 1
     numRows = length cells
     numCols = length (head cells)
 
@@ -224,15 +225,13 @@ main = do
         putStrLn "Digite o número de bombas: "
         numBombsStr <- getLine
         let numBombs = read numBombsStr :: Int
-        let isValidNumBombs = validateNumBombs numLines numColumns numBombs
-        if not isValidNumBombs
-            then do
-                putStrLn "O número de bombas deve ser metade do tamanho do tabuleiro"
-                getNumBombs
-            else return numBombs
+        if validateNumBombs numLines numColumns numBombs
+          then return numBombs
+          else do
+            putStrLn "Número de bombas inválido!"
+            getNumBombs
 
   numBombs <- getNumBombs
-
   board <- initBoard (numLines, numColumns) numBombs
   printBoard board
   playGame board
