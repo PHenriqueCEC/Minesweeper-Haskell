@@ -99,15 +99,25 @@ playGame board = do
       let [row, col] = map read (words positionStr) :: [Int]
       if validatePosition (row, col) board
         then do
-          let newBoard = openCell (row, col) board
-          printBoard newBoard
-          if isMine (getCell (row, col) newBoard)
-            then putStrLn "Você perdeu!"
-            else if allCellsOpened newBoard
+          let cell = getCell (row, col) board
+          if isOpen cell
+            then do
+              putStrLn "Esta posição já está aberta!"
+              playGame board
+            else if isFlagged cell
                    then do
-                     putStrLn "Você venceu!"
-                     return ()  -- Encerra o jogo
-                   else playGame newBoard
+                     putStrLn "Esta posição está marcada!"
+                     playGame board
+                   else do
+                     let newBoard = openCell (row, col) board
+                     printBoard newBoard
+                     if isMine (getCell (row, col) newBoard)
+                       then putStrLn "Você perdeu!"
+                       else if allCellsOpened newBoard
+                              then do
+                                putStrLn "Você venceu!"
+                                return ()  -- Encerra o jogo
+                              else playGame newBoard
         else do
           putStrLn "Posição inválida!"
           playGame board
@@ -117,9 +127,27 @@ playGame board = do
       let [row, col] = map read (words positionStr) :: [Int]
       if validatePosition (row, col) board
         then do
-          let newBoard = flagCell (row, col) board
-          printBoard newBoard
-          playGame newBoard
+          let cell = getCell (row, col) board
+          if isOpen cell
+            then do
+              putStrLn "Esta posição já está aberta!"
+              playGame board
+            else if isFlagged cell
+                   then do
+                     putStrLn "Esta posição já está marcada!"
+                     playGame board
+                   else do
+                     let newBoard = flagCell (row, col) board
+                     printBoard newBoard
+                     if allMinesFlagged newBoard
+                       then do
+                         putStrLn "Você marcou todas as bombas corretamente!"
+                         if allCellsOpened newBoard
+                           then do
+                             putStrLn "Você venceu!"
+                             return ()  -- Encerra o jogo
+                           else playGame newBoard
+                       else playGame newBoard
         else do
           putStrLn "Posição inválida!"
           playGame board
@@ -129,9 +157,19 @@ playGame board = do
       let [row, col] = map read (words positionStr) :: [Int]
       if validatePosition (row, col) board
         then do
-          let newBoard = flagCell (row, col) board
-          printBoard newBoard
-          playGame newBoard
+          let cell = getCell (row, col) board
+          if isOpen cell
+            then do
+              putStrLn "Esta posição já está aberta!"
+              playGame board
+            else if not (isFlagged cell)
+                   then do
+                     putStrLn "Esta posição não está marcada!"
+                     playGame board
+                   else do
+                     let newBoard = flagCell (row, col) board
+                     printBoard newBoard
+                     playGame newBoard
         else do
           putStrLn "Posição inválida!"
           playGame board
@@ -145,6 +183,10 @@ getCell (row, col) (MinesweeperBoard _ _ cells) = cells !! row !! col
 allCellsOpened :: MinesweeperBoard -> Bool
 allCellsOpened (MinesweeperBoard _ _ cells) =
   all (\cell -> (isOpen cell || isMine cell)) (concat cells)
+
+allMinesFlagged :: MinesweeperBoard -> Bool
+allMinesFlagged (MinesweeperBoard _ mineCount cells) =
+  all (\cell -> (isMine cell && isFlagged cell)) (concat cells)
 
 main :: IO ()
 main = do
