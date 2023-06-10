@@ -46,7 +46,7 @@ printBoard :: MinesweeperBoard -> IO ()
 printBoard (MinesweeperBoard _ _ cells) =
   mapM_ (putStrLn . concatMap cellToChar) cells
   where
-    cellToChar (Cell True _ _ _) = "X "
+    cellToChar (Cell True _ _ _) = "* "
     cellToChar (Cell False isOpen False nearbyMines) = if isOpen then show nearbyMines ++ " " else "* "
     cellToChar (Cell False _ True _) = "B "
 
