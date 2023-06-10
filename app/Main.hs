@@ -50,6 +50,14 @@ printBoard (MinesweeperBoard _ _ cells) =
     cellToChar (Cell False isOpen False nearbyMines) = if isOpen then show nearbyMines ++ " " else "* "
     cellToChar (Cell False _ True _) = "B "
 
+showBombs :: MinesweeperBoard -> IO ()
+showBombs (MinesweeperBoard _ _ cells) =
+  mapM_ (putStrLn . concatMap cellToChar) cells
+  where
+    cellToChar (Cell True _ _ _) = "X "
+    cellToChar (Cell False isOpen False nearbyMines) = if isOpen then show nearbyMines ++ " " else "* "
+    cellToChar (Cell False _ True _) = "B "
+
 openCell :: (Int, Int) -> MinesweeperBoard -> MinesweeperBoard
 openCell (row, col) (MinesweeperBoard size count cells) =
   if isOpen cell || isFlagged cell
@@ -112,11 +120,13 @@ playGame board = do
                      let newBoard = openCell (row, col) board
                      printBoard newBoard
                      if isMine (getCell (row, col) newBoard)
-                       then putStrLn "Você perdeu!"
+                       then do
+                         putStrLn "Game Over! Você foi explodido!"
+                         showBombs newBoard  -- Mostra as bombas em caso de derrota
                        else if allCellsOpened newBoard
                               then do
-                                putStrLn "Você venceu!"
-                                return ()  -- Encerra o jogo
+                                putStrLn "Parabéns! Você venceu!"
+                                return ()  -- Encerra o jogo em caso de vitória
                               else playGame newBoard
         else do
           putStrLn "Posição inválida!"
@@ -144,7 +154,7 @@ playGame board = do
                          putStrLn "Você marcou todas as bombas corretamente!"
                          if allCellsOpened newBoard
                            then do
-                             putStrLn "Você venceu!"
+                             putStrLn "Parabéns! Você venceu!"
                              return ()  -- Encerra o jogo
                            else playGame newBoard
                        else playGame newBoard
@@ -188,6 +198,14 @@ allMinesFlagged :: MinesweeperBoard -> Bool
 allMinesFlagged (MinesweeperBoard _ mineCount cells) =
   all (\cell -> (isMine cell && isFlagged cell)) (concat cells)
 
+printShowBombs :: MinesweeperBoard -> IO ()
+printShowBombs (MinesweeperBoard _ _ cells) =
+  mapM_ (putStrLn . concatMap cellToChar) cells
+  where
+    cellToChar (Cell True _ _ _) = "* "
+    cellToChar (Cell False isOpen False nearbyMines) = if isOpen then show nearbyMines ++ " " else "* "
+    cellToChar (Cell False _ True _) = "B "
+
 main :: IO ()
 main = do
   putStrLn "--------------------------------------------------"
@@ -214,8 +232,6 @@ main = do
             else return numBombs
 
   numBombs <- getNumBombs
-
-  putStrLn $ "Número de bombas válido: " ++ show numBombs
 
   board <- initBoard (numLines, numColumns) numBombs
   printBoard board
