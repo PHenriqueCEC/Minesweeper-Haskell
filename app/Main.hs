@@ -47,7 +47,15 @@ printBoard (MinesweeperBoard _ _ cells) =
   mapM_ (putStrLn . concatMap cellToChar) cells
   where
     cellToChar (Cell True _ _ _) = "X "
-    cellToChar (Cell False isOpen _ _) = if isOpen then "_ " else "* "
+    cellToChar (Cell False isOpen _ nearbyMines) = if isOpen then show nearbyMines ++ " " else "* "
+
+openCell :: (Int, Int) -> MinesweeperBoard -> MinesweeperBoard
+openCell (row, col) (MinesweeperBoard size count cells) =
+  if isOpen cell || isFlagged cell
+    then MinesweeperBoard size count cells
+    else MinesweeperBoard size count (updateCell row col (\cell -> cell { isOpen = True }) cells)
+  where
+    cell = cells !! row !! col
 
 main :: IO ()
 main = do
@@ -80,3 +88,9 @@ main = do
 
   board <- initBoard (numLines, numColumns) numBombs
   printBoard board
+
+  putStrLn "Digite a posição para abrir (linha coluna):"
+  positionStr <- getLine
+  let [row, col] = map read (words positionStr) :: [Int]
+      newBoard = openCell (row, col) board
+  printBoard newBoard
