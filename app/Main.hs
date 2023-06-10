@@ -104,7 +104,9 @@ playGame board = do
           if isMine (getCell (row, col) newBoard)
             then putStrLn "Você perdeu!"
             else if allCellsOpened newBoard
-                   then putStrLn "Você venceu!"
+                   then do
+                     putStrLn "Você venceu!"
+                     return ()  -- Encerra o jogo
                    else playGame newBoard
         else do
           putStrLn "Posição inválida!"
@@ -141,7 +143,8 @@ getCell :: (Int, Int) -> MinesweeperBoard -> Cell
 getCell (row, col) (MinesweeperBoard _ _ cells) = cells !! row !! col
 
 allCellsOpened :: MinesweeperBoard -> Bool
-allCellsOpened (MinesweeperBoard _ _ cells) = all isOpen $ concat cells
+allCellsOpened (MinesweeperBoard _ _ cells) =
+  all (\cell -> (isOpen cell || isMine cell)) (concat cells)
 
 main :: IO ()
 main = do
