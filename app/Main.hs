@@ -61,7 +61,7 @@ validateNumBombs numLines numColumns numBombs =
 
 printBoard :: MinesweeperBoard -> IO ()
 printBoard (MinesweeperBoard boardSize _ cells) = do
-  let columns = fst boardSize
+  let columns = snd boardSize
   mapM_ printLine (zip [columns, columns - 1..1] (reverse cells))
   putStr("  ")
   printCharacters columnLabels
