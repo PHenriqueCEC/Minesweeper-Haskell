@@ -81,9 +81,21 @@ printBoard (MinesweeperBoard boardSize _ cells) = do
     cellToChar (Cell False _ True _) = "B "
 
 showBombs :: MinesweeperBoard -> IO ()
-showBombs (MinesweeperBoard _ _ cells) =
-  mapM_ (putStrLn . concatMap cellToChar) cells
+showBombs (MinesweeperBoard boardSize _ cells) = do
+  let columns = snd boardSize
+  mapM_ printLine (zip [columns, columns - 1..1] (reverse cells))
+  putStr("  ")
+  printCharacters columnLabels
+  putStr "\n"
   where
+    boardColumns = fst boardSize
+    columnLabels = take boardColumns ['A'..'Z']
+
+    printLine :: (Int, [Cell]) -> IO ()
+    printLine (index, lineCells) = do
+      putStr (show index ++ " ")
+      putStrLn (concatMap cellToChar lineCells)
+
     cellToChar (Cell True _ _ _) = "X "
     cellToChar (Cell False isOpen False nearbyMines) = if isOpen then show nearbyMines ++ " " else "* "
     cellToChar (Cell False _ True _) = "B "
