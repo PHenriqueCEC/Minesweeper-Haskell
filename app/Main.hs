@@ -97,7 +97,7 @@ showBombs (MinesweeperBoard boardSize _ cells) = do
   printCharacters columnLabels
   putStr "\n"
   where
-    boardColumns = fst boardSize
+    boardColumns = snd boardSize
     columnLabels = take boardColumns ['A'..'Z']
 
     printLine :: (Int, [Cell]) -> IO ()
