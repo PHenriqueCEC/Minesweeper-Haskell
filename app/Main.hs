@@ -31,7 +31,10 @@ readInt :: IO Int
 readInt = readLn
 
 createEmptyBoard :: (Int, Int) -> [[Cell]]
-createEmptyBoard (rows, cols) = replicate rows (replicate cols (Cell False False False 0))
+createEmptyBoard (rows, cols) = replicate rows (replicate cols emptyCell)
+  where
+    emptyCell = Cell False False False 0 
+
 
 initBoard :: (Int, Int) -> Int -> IO MinesweeperBoard
 initBoard (rows, cols) mineCount = do
@@ -58,27 +61,33 @@ validateNumBombs :: Int -> Int -> Int -> Bool
 validateNumBombs numLines numColumns numBombs =
   numBombs <= (numLines * numColumns) `quot` 2
 
-
 printBoard :: MinesweeperBoard -> IO ()
 printBoard (MinesweeperBoard boardSize _ cells) = do
-  let columns = snd boardSize
-  mapM_ printLine (zip [columns, columns - 1..1] (reverse cells))
+  let maxRow = fst boardSize
+      maxCol = snd boardSize
+      columnLabels = take maxCol ['A'..'Z']
+  mapM_ printLine (zip [maxRow, maxRow - 1..1] (reverse cells))
   putStr("  ")
   printCharacters columnLabels
-  putStr "\n"
+  putStrLn ""
   where
-    boardColumns = fst boardSize
-    columnLabels = take boardColumns ['A'..'Z']
-
     printLine :: (Int, [Cell]) -> IO ()
     printLine (index, lineCells) = do
       putStr (show index ++ " ")
-      putStrLn (concatMap cellToChar lineCells)
+      putStr (concatMap cellToChar lineCells)
+      putStrLn ""
 
     cellToChar :: Cell -> String
     cellToChar (Cell True _ _ _) = "* "
     cellToChar (Cell False isOpen False nearbyMines) = if isOpen then show nearbyMines ++ " " else "* "
     cellToChar (Cell False _ True _) = "B "
+
+    printCharacters :: [Char] -> IO ()
+    printCharacters [] = return ()
+    printCharacters (c:cs) = do
+      putStr (c : " ")
+      printCharacters cs
+
 
 showBombs :: MinesweeperBoard -> IO ()
 showBombs (MinesweeperBoard boardSize _ cells) = do
