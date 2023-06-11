@@ -61,12 +61,18 @@ validateNumBombs numLines numColumns numBombs =
 
 printBoard :: MinesweeperBoard -> IO ()
 printBoard (MinesweeperBoard boardSize _ cells) = do
-  mapM_ (putStrLn . concatMap cellToChar) (reverse cells)
-  printCharacters(columnLabels)
-  putStr("\n")
+  mapM_ printLine (zip [1..] (reverse cells))
+  putStr("  ")
+  printCharacters columnLabels
+  putStr "\n"
   where
     boardColumns = fst boardSize
     columnLabels = take boardColumns ['A'..'Z']
+
+    printLine :: (Int, [Cell]) -> IO ()
+    printLine (index, lineCells) = do
+      putStr (show index ++ " ")
+      putStrLn (concatMap cellToChar lineCells)
 
     cellToChar :: Cell -> String
     cellToChar (Cell True _ _ _) = "* "
