@@ -46,12 +46,12 @@ getBinDir, getLibDir, getDynLibDir, getDataDir, getLibexecDir, getSysconfDir :: 
 
 
 bindir, libdir, dynlibdir, datadir, libexecdir, sysconfdir :: FilePath
-bindir     = "C:\\Users\\matheus.werneck\\AppData\\Roaming\\cabal\\bin"
-libdir     = "C:\\Users\\matheus.werneck\\AppData\\Roaming\\cabal\\x86_64-windows-ghc-9.6.1\\sweepminer-0.1.0.0-inplace-sweepminer"
-dynlibdir  = "C:\\Users\\matheus.werneck\\AppData\\Roaming\\cabal\\x86_64-windows-ghc-9.6.1"
-datadir    = "C:\\Users\\matheus.werneck\\AppData\\Roaming\\cabal\\x86_64-windows-ghc-9.6.1\\sweepminer-0.1.0.0"
-libexecdir = "C:\\Users\\matheus.werneck\\AppData\\Roaming\\cabal\\sweepminer-0.1.0.0-inplace-sweepminer\\x86_64-windows-ghc-9.6.1\\sweepminer-0.1.0.0"
-sysconfdir = "C:\\Users\\matheus.werneck\\AppData\\Roaming\\cabal\\etc"
+bindir     = "C:\\cabal\\bin"
+libdir     = "C:\\cabal\\x86_64-windows-ghc-9.6.1\\sweepminer-0.1.0.0-inplace-sweepminer"
+dynlibdir  = "C:\\cabal\\x86_64-windows-ghc-9.6.1"
+datadir    = "C:\\cabal\\x86_64-windows-ghc-9.6.1\\sweepminer-0.1.0.0"
+libexecdir = "C:\\cabal\\sweepminer-0.1.0.0-inplace-sweepminer\\x86_64-windows-ghc-9.6.1\\sweepminer-0.1.0.0"
+sysconfdir = "C:\\cabal\\etc"
 
 getBinDir     = catchIO (getEnv "sweepminer_bindir")     (\_ -> return bindir)
 getLibDir     = catchIO (getEnv "sweepminer_libdir")     (\_ -> return libdir)
