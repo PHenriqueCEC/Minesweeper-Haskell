@@ -1,4 +1,5 @@
 import System.Random
+import Data.Char (chr, isDigit)
 
 data Cell = Cell { isMine :: Bool
                  , isOpen :: Bool
@@ -99,12 +100,11 @@ validatePosition (row, col) (MinesweeperBoard (numLines, numColumns) _ _) =
 
 playGame :: MinesweeperBoard -> IO ()
 playGame board = do
-  putStrLn "Digite o comando (o para abrir, m para marcar, d para desmarcar):"
-  command <- getLine
-  case command of
-    "o" -> do
-      putStrLn "Digite a posição para abrir (linha coluna):"
-      positionStr <- getLine
+  putStrLn "Digite o comando (o para abrir, + para marcar, - para desmarcar) seguido por linha e coluna:"
+  positionStr <- getLine
+  let firstChar = head positionStr 
+  case firstChar of
+    _ | isDigit firstChar   -> do
       let [row, col] = map read (words positionStr) :: [Int]
       if validatePosition (row, col) board
         then do
@@ -132,10 +132,8 @@ playGame board = do
         else do
           putStrLn "Posição inválida!"
           playGame board
-    "m" -> do
-      putStrLn "Digite a posição para marcar (linha coluna):"
-      positionStr <- getLine
-      let [row, col] = map read (words positionStr) :: [Int]
+    '+' -> do
+      let [_,row, col] = map read (words positionStr) :: [Int]
       if validatePosition (row, col) board
         then do
           let cell = getCell (row, col) board
@@ -162,10 +160,8 @@ playGame board = do
         else do
           putStrLn "Posição inválida!"
           playGame board
-    "d" -> do
-      putStrLn "Digite a posição para desmarcar (linha coluna):"
-      positionStr <- getLine
-      let [row, col] = map read (words positionStr) :: [Int]
+    '-' -> do
+      let [_,row, col] = map read (words positionStr) :: [Int]
       if validatePosition (row, col) board
         then do
           let cell = getCell (row, col) board
@@ -206,6 +202,13 @@ printShowBombs (MinesweeperBoard _ _ cells) =
     cellToChar (Cell True _ _ _) = "* "
     cellToChar (Cell False isOpen False nearbyMines) = if isOpen then show nearbyMines ++ " " else "* "
     cellToChar (Cell False _ True _) = "B "
+
+
+getLetterByIndex :: Int -> Maybe Char
+getLetterByIndex idx
+  | idx >= 1 && idx <= 26 = Just (chr (idx + 64)) 
+  | idx >= 27 && idx <= 52 = Just (chr (idx + 70)) 
+  | otherwise = Nothing
 
 main :: IO ()
 main = do

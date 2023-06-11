@@ -1,3 +1,5 @@
+import Data.Char (chr)
+
 
 module Minefield
     ( Minefield(..)
