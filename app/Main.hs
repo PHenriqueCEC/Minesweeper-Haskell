@@ -1,5 +1,5 @@
 import System.Random
-import Data.Char (chr, isDigit)
+import Data.Char (chr, isDigit, ord)
 
 data Cell = Cell { isMine :: Bool
                  , isOpen :: Bool
@@ -11,6 +11,15 @@ data MinesweeperBoard = MinesweeperBoard { boardSize :: (Int, Int)
                                          , mineCount :: Int
                                          , cells :: [[Cell]]
                                          } deriving (Eq, Show)
+
+
+isUpperCase :: Char -> Bool
+isUpperCase ch = ch >= 'A' && ch <= 'Z'
+
+alphabetNumber :: Char -> Int
+alphabetNumber ch
+    | ch >= 'A' && ch <= 'Z' = ord ch - ord 'A'
+    | otherwise = error "Invalid character"
 
 readInt :: IO Int
 readInt = readLn
@@ -98,14 +107,25 @@ validatePosition :: (Int, Int) -> MinesweeperBoard -> Bool
 validatePosition (row, col) (MinesweeperBoard (numLines, numColumns) _ _) =
   row >= 0 && row < numLines && col >= 0 && col < numColumns
 
+
+parsePosition :: String -> (Char, Int)
+parsePosition positionStr =
+    case words positionStr of
+        [rowCharStr, colStr] ->
+            let rowChar = head rowCharStr
+                col = read colStr
+            in (rowChar, col)
+        _ -> error "Invalid position format"  
+
 playGame :: MinesweeperBoard -> IO ()
 playGame board = do
-  putStrLn "Digite o comando (o para abrir, + para marcar, - para desmarcar) seguido por linha e coluna:"
+  putStrLn "Digite o comando (+ para marcar, - para desmarcar) seguido por linha e coluna:"
   positionStr <- getLine
   let firstChar = head positionStr 
   case firstChar of
-    _ | isDigit firstChar   -> do
-      let [row, col] = map read (words positionStr) :: [Int]
+    _ | isUpperCase firstChar  -> do
+      let (rowChar, col) = parsePosition positionStr
+      let row = alphabetNumber rowChar
       if validatePosition (row, col) board
         then do
           let cell = getCell (row, col) board
