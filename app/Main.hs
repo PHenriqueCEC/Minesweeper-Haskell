@@ -13,6 +13,12 @@ data MinesweeperBoard = MinesweeperBoard { boardSize :: (Int, Int)
                                          } deriving (Eq, Show)
 
 
+printCharacters :: String -> IO ()
+printCharacters [] = return ()
+printCharacters (x:xs) = do
+  putStr ([x] ++ " ")
+  printCharacters xs
+
 isUpperCase :: Char -> Bool
 isUpperCase ch = ch >= 'A' && ch <= 'Z'
 
@@ -52,10 +58,17 @@ validateNumBombs :: Int -> Int -> Int -> Bool
 validateNumBombs numLines numColumns numBombs =
   numBombs <= (numLines * numColumns) `quot` 2
 
+
 printBoard :: MinesweeperBoard -> IO ()
-printBoard (MinesweeperBoard _ _ cells) =
-  mapM_ (putStrLn . concatMap cellToChar) cells
+printBoard (MinesweeperBoard boardSize _ cells) = do
+  mapM_ (putStrLn . concatMap cellToChar) (reverse cells)
+  printCharacters(columnLabels)
+  putStr("\n")
   where
+    boardColumns = fst boardSize
+    columnLabels = take boardColumns ['A'..'Z']
+
+    cellToChar :: Cell -> String
     cellToChar (Cell True _ _ _) = "* "
     cellToChar (Cell False isOpen False nearbyMines) = if isOpen then show nearbyMines ++ " " else "* "
     cellToChar (Cell False _ True _) = "B "
