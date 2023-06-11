@@ -137,6 +137,15 @@ parsePosition positionStr =
             in (rowChar, col)
         _ -> error "Invalid position format"  
 
+parsePositionCommand :: String -> (Char, Int)
+parsePositionCommand positionStr =
+    case words positionStr of
+        [_,rowCharStr, colStr] ->
+            let rowChar = head rowCharStr
+                col = read colStr
+            in (rowChar, col)
+        _ -> error "Invalid position format"  
+
 playGame :: MinesweeperBoard -> IO ()
 playGame board = do
   putStrLn "Digite o comando (+ para marcar, - para desmarcar) seguido por linha e coluna:"
@@ -144,8 +153,9 @@ playGame board = do
   let firstChar = head positionStr 
   case firstChar of
     _ | isUpperCase firstChar  -> do
-      let (rowChar, col) = parsePosition positionStr
-      let row = alphabetNumber rowChar
+      let (rowChar, colPos) = parsePosition positionStr
+      let row = colPos - 1
+      let col = alphabetNumber rowChar
       if validatePosition (row, col) board
         then do
           let cell = getCell (row, col) board
@@ -173,7 +183,9 @@ playGame board = do
           putStrLn "Posição inválida!"
           playGame board
     '+' -> do
-      let [_,row, col] = map read (words positionStr) :: [Int]
+      let (rowChar, colPos) = parsePositionCommand positionStr
+      let row = colPos - 1
+      let col = alphabetNumber rowChar
       if validatePosition (row, col) board
         then do
           let cell = getCell (row, col) board
@@ -201,7 +213,9 @@ playGame board = do
           putStrLn "Posição inválida!"
           playGame board
     '-' -> do
-      let [_,row, col] = map read (words positionStr) :: [Int]
+      let (rowChar, colPos) = parsePositionCommand positionStr
+      let row = colPos - 1
+      let col = alphabetNumber rowChar
       if validatePosition (row, col) board
         then do
           let cell = getCell (row, col) board
