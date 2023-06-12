@@ -81,9 +81,11 @@ printBoard (MinesweeperBoard boardSize _ cells) = do
       putStrLn ""
 
     cellToChar :: Cell -> String
+    cellToChar (Cell True _ True _) = "B " -- nova linha para tratar células que são minas e estão marcadas
     cellToChar (Cell True _ _ _) = "* "
     cellToChar (Cell False isOpen False nearbyMines) = if isOpen then show nearbyMines ++ " " else "* "
     cellToChar (Cell False _ True _) = "B "
+
 
     printCharacters :: [Char] -> IO ()
     printCharacters [] = return ()
