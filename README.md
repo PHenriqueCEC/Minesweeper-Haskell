@@ -5,35 +5,36 @@
 
 > Trabalho para a disciplina de Linguagens de Programação. Nesse trabalho implementamos um jogo de campo minado onde o usuário seleciona o número de linhas, colunas e bombas. Nesta versão, o jogador deve desconsiderar as diagonais para verificação de bombas.
 
-
 ## Autores
-
 
 👤 **Matheus Werneck**
 
-* Github: [@mwerneck1956](https://github.com/mwerneck1956)
-* Linkedin: [Matheus Werneck](https://www.linkedin.com/in/matheus-werneck-2aa222178/)
+- Github: [@mwerneck1956](https://github.com/mwerneck1956)
+- Linkedin: [Matheus Werneck](https://www.linkedin.com/in/matheus-werneck-2aa222178/)
 
 👤 **Pedro Henrique**
 
-* Github: [@PHenriqueCEC](https://github.com/PHenriqueCEC)
-* LinkedIn: [Pedro Henrique](https://www.linkedin.com/in/pedro-henrique-almeida-77baa01a9/)
+- Github: [@PHenriqueCEC](https://github.com/PHenriqueCEC)
+- LinkedIn: [Pedro Henrique](https://www.linkedin.com/in/pedro-henrique-almeida-77baa01a9/)
 
 # Como rodar o projeto:
 
 **Certifique-se de ter o ghci instalado no seu ambiente de desenvolvimento**
 
 1. Digite o comando abaixo:
+
 ```
-ghc main.hs
+cabal clean
 ```
 
-2. Para executar no Windows:
+2. Digite o comando abaixo:
+
 ```
-./main.exe
+cabal build
 ```
 
-3. Para executar no Linux:
+3. Digite o comando abaixo para rodar o projeto:
+
 ```
-./main
+cabal run
 ```
